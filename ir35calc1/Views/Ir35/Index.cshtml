@@ -1,0 +1,178 @@
+﻿@model ir35calc1.Models.ContractorGroup
+
+@{
+    ViewData["Title"] = "IR35 Calculator";
+}
+
+<style>
+    .validation-summary-errors {
+        color: red
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">IR35 Calculator</h1>
+    @*<p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
+
+    <a href="https://www.gov.uk/guidance/how-to-calculate-the-deemed-employment-payment">Calculation Reference</a>
+    <br>
+</div>
+
+<form asp-controller="Ir35" asp-action="Index" method="post">
+    <div class="form-row align-items-center">
+        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Daily Rate £</label>
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input asp-for="DayRateAmount.Amount" type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Enter Daily Rate">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </div>
+
+    </div>
+    <div asp-validation-summary="All"></div>
+
+    <div>
+        <br />
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th class="table-danger" scope="col">YEARLY</th>
+                    <th class="table-danger" scope="col">MONTHLY</th>
+                    <th class="table-danger" scope="col">WEEKLY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="table-secondary">
+                    <th scope="row">Gross Pay (no holidays, 52 weeks per year)</th>
+                    <td>@Model.Yearly?.GrossPay</td>
+                    <td>@Model.Monthly?.GrossPay</td>
+                    <td>@Model.Weekly?.GrossPay</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="table-info">
+                    <th scope="row">Employers NI (13.8%)</th>
+                    <td>@Model.Yearly?.EmployersNi</td>
+                    <td>@Model.Monthly?.EmployersNi</td>
+                    <td>@Model.Weekly?.EmployersNi</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="bg-warning">
+                    <th scope="row">Employees NI</th>
+                    <td>@Model.Yearly?.EmployeesNi</td>
+                    <td>@Model.Monthly?.EmployeesNi</td>
+                    <td>@Model.Weekly?.EmployeesNi</td>
+                </tr>
+                <tr class="table-warning">
+                    <th scope="row">Less than £8632 (0%)</th>
+                    <td>@Model.Yearly?.EmployeesNiBandOne</td>
+                    <td>@Model.Monthly?.EmployeesNiBandOne</td>
+                    <td>@Model.Weekly?.EmployeesNiBandOne</td>
+                </tr>
+                <tr class="table-warning">
+                    <th scope="row">£8632 - £50000 (12%)</th>
+                    <td>@Model.Yearly?.EmployeesNiBandTwo</td>
+                    <td>@Model.Monthly?.EmployeesNiBandTwo</td>
+                    <td>@Model.Weekly?.EmployeesNiBandTwo</td>
+                </tr>
+                <tr class="table-warning">
+                    <th scope="row">More than £50000 (2%)</th>
+                    <td>@Model.Yearly?.EmployeesNiBandThree</td>
+                    <td>@Model.Monthly?.EmployeesNiBandThree</td>
+                    <td>@Model.Weekly?.EmployeesNiBandThree</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="table-secondary">
+                    <th scope="row">Calculate 5% of Gross Pay (used for general expenses; no receipts needed)</th>
+                    <td>@Model.Yearly?.GeneralExpenses</td>
+                    <td>@Model.Monthly?.GeneralExpenses</td>
+                    <td>@Model.Weekly?.GeneralExpenses</td>
+                </tr>
+                <tr class="table-secondary">
+                    <th scope="row">Deemed amount on which PAYE paid (i.e. deduct 5% off Gross Pay - see row above)</th>
+                    <td>@Model.Yearly?.DeemedAmount</td>
+                    <td>@Model.Monthly?.DeemedAmount</td>
+                    <td>@Model.Weekly?.DeemedAmount</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="bg-primary">
+                    <th scope="row">PAYE</th>
+                    <td>@Model.Yearly?.Paye</td>
+                    <td>@Model.Monthly?.Paye</td>
+                    <td>@Model.Weekly?.Paye</td>
+                </tr>
+                <tr class="table-primary">
+                    <th scope="row">Income up to £12500 (0% - using tax code 1250L)</th>
+                    <td>@Model.Yearly?.PayeBandOne</td>
+                    <td>@Model.Monthly?.PayeBandOne</td>
+                    <td>@Model.Weekly?.PayeBandOne</td>
+                </tr>
+                <tr class="table-primary">
+                    <th scope="row">Income £12501 - £50000 (20%)</th>
+                    <td>@Model.Yearly?.PayeBandTwo</td>
+                    <td>@Model.Monthly?.PayeBandTwo</td>
+                    <td>@Model.Weekly?.PayeBandTwo</td>
+                </tr>
+                <tr class="table-primary">
+                    <th scope="row">Income £50001 - £150000 (40%)</th>
+                    <td>@Model.Yearly?.PayeBandThree</td>
+                    <td>@Model.Monthly?.PayeBandThree</td>
+                    <td>@Model.Weekly?.PayeBandThree</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="table-success" scope="row">Take Home Pay £ (but need to deduct agency/umbrella fees)</th>
+                    <td class="table-success">@Model.Yearly?.TakeHomePay</td>
+                    <td class="table-warning">@Model.Monthly?.TakeHomePay</td>
+                    <td class="table-success">@Model.Weekly?.TakeHomePay</td>
+                </tr>
+                <tr class="table-success">
+                    <th scope="row">Take Home Pay % (but need to deduct agency/umbrella fees)</th>
+                    <td>@Model.Yearly?.TakeHomePayPerc%</td>
+                    <td>@Model.Monthly?.TakeHomePayPerc%</td>
+                    <td>@Model.Weekly?.TakeHomePayPerc%</td>
+                </tr>
+                <tr class="table-success">
+                    <th scope="row">Total Tax Paid £</th>
+                    <td>@Model.Yearly?.TotalTaxPaid</td>
+                    <td>@Model.Monthly?.TotalTaxPaid</td>
+                    <td>@Model.Weekly?.TotalTaxPaid</td>
+                </tr>
+                <tr class="table-success">
+                    <th scope="row">Total Tax Paid %</th>
+                    <td>@Model.Yearly?.TotalTaxPaidPerc%</td>
+                    <td>@Model.Monthly?.TotalTaxPaidPerc%</td>
+                    <td>@Model.Weekly?.TotalTaxPaidPerc%</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+</form>
